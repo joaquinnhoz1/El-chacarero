@@ -248,7 +248,7 @@ const AdminProducts = ({ state }) => {
               <div className="cell-price" style={{ fontFamily: "var(--font-head)", fontWeight: 600 }}>
                 {STORE.formatPrice(p.price)} <span style={{ color: "var(--muted)", fontWeight: 400, fontSize: 12 }}>/ {STORE.formatUnit(p.unit)}</span>
               </div>
-              <div className="cell-stock" style={{ display: "flex", gap: 4, flexWrap: "wrap" }}>
+              <div className="cell-stock">
                 <span className={"pill " + (p.inStock ? "green" : "red")}>
                   {p.inStock ? "En stock" : "Sin stock"}
                 </span>
