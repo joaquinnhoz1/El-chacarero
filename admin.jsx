@@ -151,20 +151,16 @@ const ProductForm = ({ product, categories, onClose, onSave, onDelete }) => {
 
       <div className="divider"></div>
 
-      <div style={{ display: "flex", justifyContent: "space-between", gap: 8 }}>
-        <div>
-          {!isNew && (
-            <button className="btn btn-danger" onClick={() => { if (confirm("¿Eliminar este producto?")) { onDelete(product.id); onClose(); } }}>
-              <Icon name="trash" size={14} /> Eliminar
-            </button>
-          )}
-        </div>
-        <div style={{ display: "flex", gap: 8 }}>
-          <button className="btn btn-ghost" onClick={onClose}>Cancelar</button>
-          <button className="btn btn-primary" onClick={save} disabled={!draft.name.trim()}>
-            <Icon name="check" size={14} /> {isNew ? "Crear producto" : "Guardar cambios"}
+      <div className="modal-foot">
+        <button className="btn btn-primary" onClick={save} disabled={!draft.name.trim()}>
+          <Icon name="check" size={14} /> {isNew ? "Crear producto" : "Guardar cambios"}
+        </button>
+        <button className="btn btn-ghost" onClick={onClose}>Cancelar</button>
+        {!isNew && (
+          <button className="btn btn-danger modal-foot-delete" onClick={() => { if (confirm("¿Eliminar este producto?")) { onDelete(product.id); onClose(); } }}>
+            <Icon name="trash" size={14} /> Eliminar
           </button>
-        </div>
+        )}
       </div>
     </Modal>
   );
