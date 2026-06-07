@@ -436,6 +436,7 @@ const Catalog = ({ tweaks }) => {
   const [view, setView] = useState("grid");
   const [detailId, setDetailId] = useState(null);
   const [cartOpen, setCartOpen] = useState(false);
+  const [visible, setVisible] = useState(24);
   const cartHook = useCart();
   const toast = useToast();
 
@@ -460,6 +461,8 @@ const Catalog = ({ tweaks }) => {
     else /* featured */ list.sort((a, b) => (b.featured ? 1 : 0) - (a.featured ? 1 : 0) || (b.inStock ? 1 : 0) - (a.inStock ? 1 : 0));
     return list;
   }, [state.products, activeCat, query, sort]);
+
+  useEffect(() => setVisible(24), [activeCat, query, sort]);
 
   const counts = useMemo(() => {
     const c = {};
@@ -509,17 +512,26 @@ const Catalog = ({ tweaks }) => {
             hint="Probá con otra búsqueda o categoría."
           />
         ) : (
-          <div className={"pgrid " + tweaks.density + (tweaks.cardStyle === "framed" ? " framed" : "") + (view === "list" ? " plist" : "")}>
-            {filtered.map((p) => (
-              <ProductCard
-                key={p.id}
-                product={p}
-                category={state.categories.find((c) => c.id === p.category)}
-                onClick={() => setDetailId(p.id)}
-                onAdd={() => handleAdd(p.id)}
-              />
-            ))}
-          </div>
+          <>
+            <div className={"pgrid " + tweaks.density + (tweaks.cardStyle === "framed" ? " framed" : "") + (view === "list" ? " plist" : "")}>
+              {filtered.slice(0, visible).map((p) => (
+                <ProductCard
+                  key={p.id}
+                  product={p}
+                  category={state.categories.find((c) => c.id === p.category)}
+                  onClick={() => setDetailId(p.id)}
+                  onAdd={() => handleAdd(p.id)}
+                />
+              ))}
+            </div>
+            {visible < filtered.length && (
+              <div style={{ textAlign: "center", padding: "24px 0 40px" }}>
+                <button className="btn btn-ghost" style={{ padding: "12px 32px" }} onClick={() => setVisible(v => v + 24)}>
+                  Cargar más ({filtered.length - visible} restantes)
+                </button>
+              </div>
+            )}
+          </>
         )}
       </div>
 

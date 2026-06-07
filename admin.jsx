@@ -171,10 +171,13 @@ const ProductForm = ({ product, categories, onClose, onSave, onDelete }) => {
 };
 
 // ----- Tab: Productos -----
+const PAGE_SIZE = 20;
+
 const AdminProducts = ({ state }) => {
   const [editing, setEditing] = useState(null); // product or {} for new
   const [query, setQuery] = useState("");
   const [catFilter, setCatFilter] = useState("all");
+  const [page, setPage] = useState(0);
   const toast = useToast();
 
   const filtered = useMemo(() => {
@@ -184,6 +187,11 @@ const AdminProducts = ({ state }) => {
     if (q) list = list.filter((p) => p.name.toLowerCase().includes(q));
     return list;
   }, [state.products, catFilter, query]);
+
+  useEffect(() => setPage(0), [query, catFilter]);
+
+  const totalPages = Math.ceil(filtered.length / PAGE_SIZE);
+  const paginated = filtered.slice(page * PAGE_SIZE, (page + 1) * PAGE_SIZE);
 
   const save = (draft) => {
     if (draft.id) {
@@ -231,7 +239,7 @@ const AdminProducts = ({ state }) => {
           <div style={{ padding: 30 }}>
             <EmptyState icon="bag" title="Sin resultados" hint="Probá con otro filtro o creá un producto nuevo." />
           </div>
-        ) : filtered.map((p) => {
+        ) : paginated.map((p) => {
           const cat = state.categories.find((c) => c.id === p.category);
           return (
             <div className="adm-row" key={p.id}>
@@ -270,6 +278,18 @@ const AdminProducts = ({ state }) => {
           );
         })}
       </div>
+
+      {totalPages > 1 && (
+        <div className="adm-pagination">
+          <button className="btn btn-ghost btn-sm" onClick={() => setPage(p => p - 1)} disabled={page === 0}>
+            ← Anterior
+          </button>
+          <span className="adm-page-info">Página {page + 1} de {totalPages}</span>
+          <button className="btn btn-ghost btn-sm" onClick={() => setPage(p => p + 1)} disabled={page >= totalPages - 1}>
+            Siguiente →
+          </button>
+        </div>
+      )}
 
       {editing && (
         <ProductForm
